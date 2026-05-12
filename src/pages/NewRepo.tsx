@@ -38,8 +38,8 @@ export function NewRepo() {
       <AnimatedBackground />
       <div style={{ position: 'relative', zIndex: 10 }}>
         <Navbar />
-        <div style={{ maxWidth: 640, margin: '40px auto', padding: '0 24px' }}>
-          <div className="clay-card" style={{ padding: '36px 40px' }}>
+        <div style={{ maxWidth: 640, margin: '32px auto', padding: '0 16px' }}>
+          <div className="clay-card" style={{ padding: 'clamp(20px, 5vw, 40px)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 32 }}>
               <GitBranch size={28} color="#0096FF" />
               <h1 style={{ fontFamily: "'Fredoka One'", fontSize: 28 }}>New Repository</h1>

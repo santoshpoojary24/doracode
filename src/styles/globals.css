@@ -249,6 +249,44 @@ body {
   50%      { border-color: rgba(0,150,255,1); }
 }
 
+/* ── RepoView: Repo Grid (desktop) ── */
+.repo-grid {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 16px;
+  min-height: 70vh;
+}
+
+/* ── RepoView: Mobile File Tree toggle button ── */
+.file-tree-toggle {
+  display: none;
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(0,150,255,0.1);
+  border: 1.5px solid rgba(0,150,255,0.25);
+  border-radius: 14px;
+  color: #6dd5ff;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  transition: all 0.25s ease;
+  margin-bottom: 12px;
+}
+.file-tree-toggle:hover {
+  background: rgba(0,150,255,0.18);
+}
+
+/* ── RepoView: File viewer action buttons wrap ── */
+.file-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
 /* ── Toast ── */
 .toast {
   position: fixed;
@@ -533,12 +571,67 @@ body {
   .clay-card { border-radius: 16px; }
   .modal-content { max-width: 100%; }
   body { padding-bottom: 80px; }
-  
+
   .desktop-nav-links {
     display: none !important;
   }
-  
+
   .mobile-nav {
     display: flex !important;
+  }
+
+  /* RepoView responsive grid → single column */
+  .repo-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* File tree: sticky position doesn't make sense in stacked layout */
+  .repo-file-tree {
+    position: static !important;
+  }
+
+  /* Show mobile file-tree toggle button */
+  .file-tree-toggle {
+    display: flex !important;
+  }
+
+  /* Drop zone: tighten padding on small screens */
+  .drop-zone {
+    padding: 28px 16px;
+  }
+
+  /* Repo header: stack vertically */
+  .repo-header-inner {
+    flex-direction: column;
+    align-items: flex-start !important;
+  }
+
+  /* Repo header upload button: full width */
+  .repo-header-inner .btn-primary {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* File name path: allow wrapping */
+  .file-path-text {
+    word-break: break-all;
+    font-size: 12px !important;
+  }
+
+  /* Upload button in file list: full width */
+  .upload-btn-row {
+    width: 100%;
+  }
+  .upload-btn-row .btn-primary {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Toast: stretch to screen width on mobile */
+  .toast {
+    left: 12px;
+    right: 12px;
+    bottom: 88px;
+    width: auto;
   }
 }

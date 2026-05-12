@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { GitBranch, Lock, Globe, Upload, FileCode, ChevronRight, Download, Clock, Trash2 } from 'lucide-react'
+import { GitBranch, Lock, Globe, Upload, FileCode, ChevronRight, Download, Clock, Trash2, ChevronDown, ChevronUp } from 'lucide-react'
 import { supabase, type Repository, type FileRecord, type Commit } from '@/lib/supabase'
 import { useAuthStore, useToastStore } from '@/store'
 import { FileTree } from '@/components/repository/FileTree'
@@ -28,6 +28,7 @@ export function RepoView() {
   const [loading, setLoading] = useState(true)
   const [refreshTree, setRefreshTree] = useState(0)
   const [fileToDelete, setFileToDelete] = useState<FileRecord | null>(null)
+  const [showFileTree, setShowFileTree] = useState(true)
 
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
@@ -112,27 +113,27 @@ export function RepoView() {
         <GadgetDrawer open={gadgetOpen} onClose={() => setGadgetOpen(false)} />
 
         {/* Repo Header */}
-        <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 24px 0' }}>
-          <div className="clay-card" style={{ padding: '24px 28px', marginBottom: 20 }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-                  <span style={{ color: 'rgba(240,248,255,0.4)', fontSize: 14 }}>
-                    <button onClick={() => nav(user ? '/dashboard' : '/explore')} style={{ background: 'none', border: 'none', color: 'rgba(240,248,255,0.4)', cursor: 'pointer' }}>{user ? 'dashboard' : 'explore'}</button>
-                    <ChevronRight size={14} style={{ display: 'inline' }} />
+        <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 16px 0' }}>
+          <div className="clay-card" style={{ padding: '20px 20px', marginBottom: 20 }}>
+            <div className="repo-header-inner" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4, flexWrap: 'wrap' }}>
+                  <span style={{ color: 'rgba(240,248,255,0.4)', fontSize: 13 }}>
+                    <button onClick={() => nav(user ? '/dashboard' : '/explore')} style={{ background: 'none', border: 'none', color: 'rgba(240,248,255,0.4)', cursor: 'pointer', fontSize: 13 }}>{user ? 'dashboard' : 'explore'}</button>
+                    <ChevronRight size={13} style={{ display: 'inline' }} />
                   </span>
-                  <GitBranch size={20} color="#0096FF" />
-                  <h1 style={{ fontFamily: "'Fredoka One'", fontSize: 26, color: '#6dd5ff' }}>{repo.name}</h1>
+                  <GitBranch size={18} color="#0096FF" />
+                  <h1 style={{ fontFamily: "'Fredoka One'", fontSize: 22, color: '#6dd5ff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{repo.name}</h1>
                   {repo.is_private ? <span className="badge badge-red"><Lock size={9} /> Private</span> : <span className="badge badge-teal"><Globe size={9} /> Public</span>}
                 </div>
-                {repo.description && <p style={{ color: 'rgba(240,248,255,0.5)', fontSize: 14 }}>{repo.description}</p>}
-                <div style={{ display: 'flex', gap: 16, marginTop: 8, fontSize: 12, color: 'rgba(240,248,255,0.4)' }}>
+                {repo.description && <p style={{ color: 'rgba(240,248,255,0.5)', fontSize: 13 }}>{repo.description}</p>}
+                <div style={{ display: 'flex', gap: 14, marginTop: 8, fontSize: 12, color: 'rgba(240,248,255,0.4)', flexWrap: 'wrap' }}>
                   {repo.language && <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}><span className="lang-dot" style={{ background: LANG_COLORS[repo.language.toLowerCase()] || '#aaa' }} />{repo.language}</span>}
                   <span><Clock size={11} style={{ display: 'inline' }} /> Updated {timeAgo(repo.updated_at)}</span>
                 </div>
               </div>
               {isOwnerOrAdmin && (
-                <button className="btn-primary" onClick={() => setShowUpload(!showUpload)}>
+                <button className="btn-primary" style={{ flexShrink: 0 }} onClick={() => setShowUpload(!showUpload)}>
                   <Upload size={16} /> {showUpload ? 'Close Upload' : 'Upload Files'}
                 </button>
               )}
@@ -141,40 +142,51 @@ export function RepoView() {
 
           {/* Upload Zone */}
           {showUpload && isOwnerOrAdmin && (
-            <div className="clay-card" style={{ padding: 24, marginBottom: 20 }}>
+            <div className="clay-card" style={{ padding: 20, marginBottom: 20 }}>
               <h3 style={{ fontFamily: "'Fredoka One'", marginBottom: 16 }}>📦 Upload to Repository</h3>
               <DropZone repoId={repoId!} onComplete={() => { setShowUpload(false); setRefreshTree(r => r + 1) }} />
             </div>
           )}
 
           {/* Main Layout */}
-          <div style={{ display: 'grid', gridTemplateColumns: '260px 1fr', gap: 16, minHeight: '70vh' }}>
+          <div className="repo-grid">
             {/* File Tree */}
-            <div className="clay-card" style={{ padding: '12px 8px', height: 'fit-content', position: 'sticky', top: 80 }}>
-              <div style={{ padding: '0 8px 12px', fontFamily: "'Nunito'", fontWeight: 800, fontSize: 13, color: 'rgba(240,248,255,0.5)', textTransform: 'uppercase', letterSpacing: 1 }}>
-                Files
-              </div>
-              <FileTree repoId={repoId!} activeFileId={activeFile?.id} onFileSelect={openFile} refreshTrigger={refreshTree} />
+            <div>
+              {/* Mobile toggle */}
+              <button className="file-tree-toggle" onClick={() => setShowFileTree(s => !s)}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  📁 Files
+                </span>
+                {showFileTree ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+              </button>
+              {showFileTree && (
+                <div className="clay-card repo-file-tree" style={{ padding: '12px 8px', height: 'fit-content', position: 'sticky', top: 80 }}>
+                  <div style={{ padding: '0 8px 12px', fontFamily: "'Nunito'", fontWeight: 800, fontSize: 13, color: 'rgba(240,248,255,0.5)', textTransform: 'uppercase', letterSpacing: 1 }}>
+                    Files
+                  </div>
+                  <FileTree repoId={repoId!} activeFileId={activeFile?.id} onFileSelect={(f) => { openFile(f); setShowFileTree(false) }} refreshTrigger={refreshTree} />
+                </div>
+              )}
             </div>
 
             {/* Editor / Viewer */}
             <div>
               {!activeFile ? (
-                <div className="clay-card" style={{ padding: 60, textAlign: 'center', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
-                  <FileCode size={64} color="rgba(0,150,255,0.3)" />
-                  <h3 style={{ fontFamily: "'Fredoka One'", fontSize: 22, color: 'rgba(240,248,255,0.4)' }}>Select a file to view</h3>
-                  <p style={{ color: 'rgba(240,248,255,0.25)', fontSize: 14 }}>Browse the file tree on the left</p>
+                <div className="clay-card" style={{ padding: '40px 24px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
+                  <FileCode size={56} color="rgba(0,150,255,0.3)" />
+                  <h3 style={{ fontFamily: "'Fredoka One'", fontSize: 20, color: 'rgba(240,248,255,0.4)' }}>Select a file to view</h3>
+                  <p style={{ color: 'rgba(240,248,255,0.25)', fontSize: 14 }}>Tap 📁 Files above to browse</p>
                 </div>
               ) : (
-                <div className="clay-card" style={{ padding: 20 }}>
+                <div className="clay-card" style={{ padding: 16 }}>
                   {/* File Header */}
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 10 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 10 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0, flexWrap: 'wrap' }}>
                       <span className="badge badge-blue">{lang}</span>
-                      <span style={{ fontFamily: "'JetBrains Mono'", fontSize: 14 }}>{activeFile.path}</span>
-                      {activeFile.size_bytes && <span style={{ fontSize: 12, color: 'rgba(240,248,255,0.35)' }}>{formatBytes(activeFile.size_bytes)}</span>}
+                      <span className="file-path-text" style={{ fontFamily: "'JetBrains Mono'", fontSize: 13 }}>{activeFile.path}</span>
+                      {activeFile.size_bytes && <span style={{ fontSize: 11, color: 'rgba(240,248,255,0.35)' }}>{formatBytes(activeFile.size_bytes)}</span>}
                     </div>
-                    <div style={{ display: 'flex', gap: 8 }}>
+                    <div className="file-actions">
                       <button className="btn-secondary" style={{ padding: '6px 12px', fontSize: 12 }} onClick={downloadFile}>
                         <Download size={12} /> Download
                       </button>
@@ -187,7 +199,7 @@ export function RepoView() {
                             {editMode ? '💾 Save & Commit' : '✏️ Edit'}
                           </button>
                           {!editMode && (
-                            <button className="btn-danger" style={{ padding: '6px 12px', fontSize: 12, marginLeft: 4 }} onClick={() => setFileToDelete(activeFile)}>
+                            <button className="btn-danger" style={{ padding: '6px 12px', fontSize: 12 }} onClick={() => setFileToDelete(activeFile)}>
                               <Trash2 size={12} /> Delete
                             </button>
                           )}
@@ -202,7 +214,7 @@ export function RepoView() {
                     language={lang}
                     readOnly={!editMode}
                     onChange={setFileContent}
-                    height="560px"
+                    height="min(560px, 60vh)"
                   />
                 </div>
               )}

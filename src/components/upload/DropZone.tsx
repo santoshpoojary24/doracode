@@ -63,14 +63,14 @@ export function DropZone({ repoId, onComplete }: { repoId: string; onComplete?: 
     <div>
       <div {...getRootProps()} className={`drop-zone${isDragActive ? ' active' : ''}`}>
         <input {...getInputProps()} />
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
-          <div style={{ fontSize: 56, animation: isDragActive ? 'starBounce 0.5s ease infinite' : 'none' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
+          <div style={{ fontSize: 48, animation: isDragActive ? 'starBounce 0.5s ease infinite' : 'none' }}>
             {isDragActive ? '🎒' : '📦'}
           </div>
-          <div style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 800, fontSize: 20 }}>
+          <div style={{ fontFamily: "'Nunito', sans-serif", fontWeight: 800, fontSize: 18 }}>
             {isDragActive ? "Drop files into Doraemon's Pocket!" : 'Drag & Drop files here'}
           </div>
-          <p style={{ color: 'rgba(240,248,255,0.5)', fontSize: 14 }}>or click to browse — all file types supported</p>
+          <p style={{ color: 'rgba(240,248,255,0.5)', fontSize: 13 }}>or tap to browse — all file types supported</p>
           <button className="btn-primary" type="button">
             <CloudUpload size={16} /> Choose Files
           </button>
@@ -99,9 +99,11 @@ export function DropZone({ repoId, onComplete }: { repoId: string; onComplete?: 
             </div>
           ))}
           {files.some((f) => f.status === 'pending') && (
-            <button className="btn-primary" onClick={uploadAll} style={{ alignSelf: 'flex-start', marginTop: 8 }}>
-              <CloudUpload size={16} /> Upload {files.filter((f) => f.status === 'pending').length} File(s)
-            </button>
+            <div className="upload-btn-row">
+              <button className="btn-primary" onClick={uploadAll} style={{ marginTop: 8 }}>
+                <CloudUpload size={16} /> Upload {files.filter((f) => f.status === 'pending').length} File(s)
+              </button>
+            </div>
           )}
         </div>
       )}
