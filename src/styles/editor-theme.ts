@@ -1,0 +1,37 @@
+import type { editor } from 'monaco-editor'
+
+export const doraTheme: editor.IStandaloneThemeData = {
+  base: 'vs-dark',
+  inherit: true,
+  rules: [
+    { token: 'comment',    foreground: '4a6fa5', fontStyle: 'italic' },
+    { token: 'keyword',    foreground: '6dd5ff', fontStyle: 'bold' },
+    { token: 'string',     foreground: '6ef5e8' },
+    { token: 'number',     foreground: 'FFD700' },
+    { token: 'type',       foreground: '9d8fff' },
+    { token: 'function',   foreground: '5cdeff' },
+    { token: 'variable',   foreground: 'F0F8FF' },
+    { token: 'operator',   foreground: '00C9B1' },
+    { token: 'delimiter',  foreground: 'a0b4cc' },
+    { token: 'tag',        foreground: 'FF8FAB' },
+    { token: 'attribute',  foreground: 'FFD700' },
+  ],
+  colors: {
+    'editor.background': '#0d1f3c',
+    'editor.foreground': '#F0F8FF',
+    'editor.lineHighlightBackground': '#0a2040',
+    'editorLineNumber.foreground': '#2a4a6a',
+    'editorLineNumber.activeForeground': '#0096FF',
+    'editor.selectionBackground': '#0096FF33',
+    'editor.inactiveSelectionBackground': '#0096FF18',
+    'editorCursor.foreground': '#0096FF',
+    'editorIndentGuide.background': '#1a3060',
+    'editorIndentGuide.activeBackground': '#0096FF44',
+    'editor.findMatchBackground': '#FFD70033',
+    'editor.findMatchHighlightBackground': '#FFD70018',
+    'scrollbarSlider.background': '#0096FF22',
+    'scrollbarSlider.hoverBackground': '#0096FF44',
+    'scrollbarSlider.activeBackground': '#0096FF66',
+    'minimap.background': '#0a1830',
+  },
+}
